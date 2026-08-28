@@ -1,0 +1,12 @@
+---
+- name: "{{ 'fail2ban | Deploy fail2ban action: ' + outer_item['name'] }}"
+  ansible.builtin.template:
+    src: "action.local.j2"
+    dest: "{{ vars['fail2ban_conf_dest'] + '/action.d/' +
+      outer_item['name'] + '.local' }}"
+    group: "root"
+    owner: "root"
+    mode: "0644"
+    force: "yes"
+  notify:
+    - "Restart fail2ban"

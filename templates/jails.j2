@@ -1,0 +1,94 @@
+{% if j['filter'] is defined and j['filter'] != '' %}
+{{ 'filter = ' + j['filter'] }}
+{% endif %}
+{% if j['logpath'] is defined and j['logpath'] != '' %}
+{{ 'logpath = ' + j['logpath'] }}
+{% endif %}
+{% if j['logencoding'] is defined and j['logencoding'] != '' %}
+{{ 'logencoding = ' + j['logencoding'] }}
+{% endif %}
+{% if j['logtimezone'] is defined and j['logtimezone'] != '' %}
+{{ 'logtimezone = ' + j['logtimezone'] }}
+{% endif %}
+{% if j['banaction'] is defined and j['banaction'] != '' %}
+{{ 'banaction = ' + j['banaction'] }}
+{% endif %}
+{% if j['banaction_allports'] is defined and j['banaction_allports'] != '' %}
+{{ 'banaction_allports = ' + j['banaction_allports'] }}
+{% endif %}
+{% if j['action'] is defined and j['action'] != '' %}
+{% if j['action_options'] is defined and j['action_options'] != '' %}
+{% for ja in j['action_options'] %}
+{% for k,v in ja.items() %}
+{% if loop['first'] %}
+{{ 'action = ' + j['action'] + '[' -}}
+{% endif %}
+{{ k + '=\"' ~ v ~ '\"' -}}
+{% if loop['last'] %}
+{{ ']' }}
+{% else %}
+{{ "," -}}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% else %}
+{{ 'action = ' + j['action'] }}
+{% endif %}
+{% endif %}
+{% if j['ignoreself'] is defined and j['ignoreself'] != '' %}
+{{ 'ignoreself = ' + j['ignoreself'] }}
+{% endif %}
+{% if j['ignoreip'] is defined and j['ignoreip'] != '' %}
+{% if j['ignoreip'] is string %}
+{{ 'ignoreip = ' + j['ignoreip'] | ansible.utils.ipaddr() }}
+{% elif j['ignoreip'] is sequence %}
+{% for ji in j['ignoreip'] %}
+{% if loop['first'] %}
+{{ 'ignoreip =' -}}
+{% endif %}
+{% if ji | ansible.utils.ipaddr() %}
+{{ ' ' + ji -}}
+{% endif %}
+{% if loop['last'] %}
+{{ '' }}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endif %}
+{% if j['ignorecommand'] is defined and j['ignorecommand'] != '' %}
+{{ 'ignorecommand = ' + j['ignorecommand'] }}
+{% endif %}
+{% if j['ignorecache'] is defined and j['ignorecache'] != '' %}
+{{ 'ignorecache = ' + j['ignorecache'] }}
+{% endif %}
+{% if j['bantime'] is defined and j['bantime'] != '' %}
+{{ 'bantime = ' + j['bantime'] }}
+{% endif %}
+{% if j['findtime'] is defined and j['findtime'] != '' %}
+{{ 'findtime = ' + j['findtime'] }}
+{% endif %}
+{% if j['maxretry'] is defined and j['maxretry'] != '' %}
+{{ 'maxretry = ' + j['maxretry'] }}
+{% endif %}
+{% if j['backend'] is defined and j['backend'] in ['auto', 'pyinotify', 'gamin',
+  'polling', 'systemd'] %}
+{{ 'backend = ' + j['backend'] }}
+{% endif %}
+{% if j['usedns'] is defined and j['usedns'] != '' %}
+{{ 'usedns = ' + j['usedns'] }}
+{% endif %}
+{% if j['failregex'] is defined and j['failregex'] != '' %}
+{{ 'failregex = ' + j['failregex'] }}
+{% endif %}
+{% if j['ignoreregex'] is defined and j['ignoreregex'] != '' %}
+{{ 'ignoreregex = ' + j['ignoreregex'] }}
+{% endif %}
+{% if j['maxmatches'] is defined and j['maxmatches'] != '' %}
+{{ 'maxmatches = ' + j['maxmatches'] }}
+{% endif %}
+{% if j['enabled'] is defined and j['enabled'] in ['true', 'false'] %}
+{{ 'enabled = ' + j['enabled'] }}
+{% endif %}
+{% if j['mode'] is defined and j['mode'] != '' %}
+{{ 'mode = ' + j['mode'] }}
+{% endif %}

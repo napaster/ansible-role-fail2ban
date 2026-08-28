@@ -1,0 +1,34 @@
+{{ '## fail2ban.local' }}
+{{ '# ' + ansible_managed }}
+{{ '# Do not edit manually' }}
+
+{{ '[Definition]' }}
+{% for f in vars['fail2ban_settings'] %}
+{% if f['loglevel'] is defined and f['loglevel'] in ['CRITICAL', 'ERROR',
+  'WARNING', 'NOTICE', 'INFO', 'DEBUG', 'TRACEDEBUG', 'HEAVYDEBUG'] %}
+{{ 'loglevel = ' + f['loglevel'] }}
+{% endif %}
+{% if f['logtarget'] is defined and f['logtarget'] in ['filename', 'SYSLOG',
+  'STDERR', 'STDOUT'] %}
+{{ 'logtarget = ' + f['logtarget'] }}
+{% endif %}
+{% if f['socket'] is defined and f['socket'] != '' %}
+{{ 'socket = ' + f['socket'] }}
+{% endif %}
+{% if f['pidfile'] is defined and f['pidfile'] != '' %}
+{{ 'pidfile = ' + f['pidfile'] }}
+{% endif %}
+{% if f['dbfile'] is defined and f['dbfile'] != '' %}
+{{ 'dbfile = ' + f['dbfile'] }}
+{% endif %}
+{% if f['dbmaxmatches'] is defined and f['dbmaxmatches'] != '' %}
+{{ 'dbmaxmatches = ' ~ f['dbmaxmatches'] }}
+{% endif %}
+{% if f['dbpurgeage'] is defined and f['dbpurgeage'] != '' %}
+{{ 'dbpurgeage = ' ~ f['dbpurgeage'] }}
+{% endif %}
+{% if f['stacksize'] is defined and f['stacksize'] != '' %}
+{{ '[Thread]' }}
+{{ 'stacksize = ' ~ f['stacksize'] }}
+{% endif %}
+{% endfor %}

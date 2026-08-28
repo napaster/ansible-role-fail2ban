@@ -1,0 +1,4 @@
+---
+fail2ban_conf_dest: '/etc/fail2ban'
+fail2ban_service: 'fail2ban'
+fail2ban_package: 'fail2ban'

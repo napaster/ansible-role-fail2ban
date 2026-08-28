@@ -1,0 +1,44 @@
+{{ '## ' + outer_item['name'] + '.local' }}
+{{ '# ' + ansible_managed }}
+{{ '# Do not edit manually' }}
+
+{% if outer_item['includes'] is defined and outer_item['includes'] != '' %}
+{% for i in outer_item['includes'] %}
+{% for k,v in i.items() %}
+{% if loop['first'] %}
+{{ '[INCLUDES]' }}
+{% endif %}
+{{ k + ' = ' + v }}
+{% if loop['last'] %}
+{{ '' }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% if outer_item['definintions'] is defined and
+  outer_item['definintions'] != '' %}
+{% for d in outer_item['definintions'] %}
+{% for k,v in d.items() %}
+{% if loop['first'] %}
+{{ '[Definition]' }}
+{% endif %}
+{{ k + ' = ' + v }}
+{% if loop['last'] %}
+{{ '' }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% if outer_item['init'] is defined and outer_item['init'] != '' %}
+{% for i in outer_item['init'] %}
+{% for k,v in i.items() %}
+{% if loop['first'] %}
+{{ '[Init]' }}
+{% endif %}
+{{ k + ' = ' + v }}
+{% if loop['last'] %}
+{{ '' }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}

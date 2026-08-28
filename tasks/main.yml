@@ -1,0 +1,31 @@
+---
+- name: "fail2ban | Include pre requisite tasks"
+  ansible.builtin.import_tasks:
+    file: "pre_requisite.yml"
+- name: "fail2ban | Include packages tasks"
+  ansible.builtin.include_tasks:
+    file: "packages.yml"
+  when:
+    - "hostvars[inventory_hostname]['fail2ban'] is defined"
+    - "hostvars[inventory_hostname]['fail2ban'] != ''"
+    - "hostvars[inventory_hostname]['fail2ban'] |
+       community.general.json_query(vars['fail2ban_install_package']) is
+       defined"
+    - "hostvars[inventory_hostname]['fail2ban'] |
+       community.general.json_query(vars['fail2ban_install_package']) == 'true'"
+  vars:
+    fail2ban_install_package: "[] | map(&install_package || 'false', @) | [0]"
+- name: "fail2ban | Include deployment tasks"
+  ansible.builtin.import_tasks:
+    file: "deploy.d/fail2ban.yml"
+- name: "fail2ban | Include action deployment tasks"
+  ansible.builtin.include_tasks:
+    file: "deploy.d/action.yml"
+  loop: "{{ vars['fail2ban_actions'] | flatten(levels=1) }}"
+  loop_control:
+    loop_var: "outer_item"
+    label: "{{ 'Deploy fail2ban action: ' + outer_item['name'] }}"
+  when:
+    - "vars['fail2ban_actions'] is defined"
+    - "vars['fail2ban_actions'] not in ['', [], None]"
+    - "outer_item['name'] != ''"

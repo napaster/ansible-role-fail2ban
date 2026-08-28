@@ -1,0 +1,19 @@
+{{ '## jail.local' }}
+{{ '# ' + ansible_managed }}
+{{ '# Do not edit manually' }}
+
+{% if vars['fail2ban_jail'] is defined and vars['fail2ban_jail'] != [] %}
+{% for j in vars['fail2ban_jail'] %}
+{{ '[DEFAULT]' }}
+{% include 'jails.j2' %}
+{% endfor %}
+{% endif %}
+{% if vars['fail2ban_jails'] is defined and vars['fail2ban_jails'] != [] %}
+{% for j in vars['fail2ban_jails'] %}
+{% if j['name'] is defined and j['name'] != '' %}
+{{ '' }}
+{{ '[' ~ j['name'] ~ ']' }}
+{% include 'jails.j2' %}
+{% endif %}
+{% endfor %}
+{% endif %}

@@ -1,0 +1,50 @@
+---
+- name: "fail2ban | Add the OS specific varibles"
+  ansible.builtin.include_vars:
+    file: "{{ hostvars[inventory_hostname]['ansible_os_family'] + '.yml' }}"
+- name: "fail2ban | Set facts about fail2ban role"
+  ansible.builtin.set_fact:
+    fail2ban_settings: "{{ hostvars[inventory_hostname]['fail2ban'] |
+      community.general.json_query('[].settings[]') }}"
+    fail2ban_package_state: "{{ hostvars[inventory_hostname]['fail2ban'] |
+      community.general.json_query('[].package_state | [0]') }}"
+    fail2ban_jail: "{{ hostvars[inventory_hostname]['fail2ban'] |
+      community.general.json_query('[].jail[]') }}"
+    fail2ban_jails: "{{ hostvars[inventory_hostname]['fail2ban'] |
+      community.general.json_query('[].jails[]') }}"
+    fail2ban_actions: "{{ hostvars[inventory_hostname]['fail2ban'] |
+      community.general.json_query('[].actions[]') }}"
+- name: "fail2ban | Assert that package state in valid value"
+  ansible.builtin.assert:
+    that:
+      - "vars['fail2ban_package_state'] in ['present', 'latest']"
+    fail_msg: "'package_state' must be in 'present' or 'latest'"
+    quiet: "true"
+  when:
+    - "vars['fail2ban_package_state'] is defined"
+    - "vars['fail2ban_package_state'] not in ['', [], None]"
+- name: "fail2ban | Set package state to 'present' cause value is not defined"
+  ansible.builtin.set_fact:
+    fail2ban_package_state: "present"
+  when:
+    - "vars['fail2ban_package_state'] is defined"
+    - "(vars['fail2ban_package_state'] == '' or
+      vars['fail2ban_package_state'] == None)"
+- name: "fail2ban | Create fail2ban catalog"
+  ansible.builtin.file:
+    path: "{{ hostvars[inventory_hostname]['fail2ban_conf_dest'] }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+- name: "fail2ban | Create fail2ban action.d catalog"
+  ansible.builtin.file:
+    path: "{{ hostvars[inventory_hostname]['fail2ban_conf_dest'] +
+      '/action.d' }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  when:
+    - "vars['fail2ban_actions'] is defined"
+    - "vars['fail2ban_actions'] not in ['', [], None]"

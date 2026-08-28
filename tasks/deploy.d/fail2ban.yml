@@ -1,0 +1,40 @@
+---
+- name: "fail2ban | Deploy fail2ban.local"
+  ansible.builtin.template:
+    src: "fail2ban.local.j2"
+    dest: "{{ vars['fail2ban_conf_dest'] + '/fail2ban.local' }}"
+    group: "root"
+    owner: "root"
+    mode: "0644"
+    force: "yes"
+  when:
+    - "vars['fail2ban_settings'] is defined"
+    - "vars['fail2ban_settings'] not in ['', [], None]"
+  notify:
+    - "Restart fail2ban"
+- name: "fail2ban | Deploy jail.local"
+  ansible.builtin.template:
+    src: "jail.local.j2"
+    dest: "{{ vars['fail2ban_conf_dest'] + '/jail.local' }}"
+    group: "root"
+    owner: "root"
+    mode: "0644"
+    force: "yes"
+  when:
+    - "vars['fail2ban_jail'] is defined"
+    - "vars['fail2ban_jail'] not in ['', [], None]"
+  notify:
+    - "Restart fail2ban"
+- name: "fail2ban | Enable fail2ban"
+  ansible.builtin.systemd:
+    name: "{{ hostvars[inventory_hostname]['fail2ban_service'] }}"
+    enabled: "yes"
+  when:
+    - "hostvars[inventory_hostname]['fail2ban'] is defined"
+    - "hostvars[inventory_hostname]['fail2ban'] != ''"
+    - "hostvars[inventory_hostname]['fail2ban'] |
+       community.general.json_query(vars['fail2ban_enable']) is defined"
+    - "hostvars[inventory_hostname]['fail2ban'] |
+       community.general.json_query(vars['fail2ban_enable']) == 'true'"
+  vars:
+    fail2ban_enable: "[] | map(&enable || 'false', @) | [0]"
