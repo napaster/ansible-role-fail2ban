@@ -1,4 +1,8 @@
 ---
 fail2ban_conf_dest: '/etc/fail2ban'
 fail2ban_service: 'fail2ban'
-fail2ban_package: 'fail2ban'
+# banaction iptables-ipset (group_vars/all/fail2ban.yml) без бинаря ipset молча не банит:
+# «/bin/sh: ipset: not found», «Set f2b-sshd doesn't exist». В Debian ipset — отдельный пакет.
+fail2ban_package:
+  - 'fail2ban'
+  - 'ipset'

@@ -4,6 +4,9 @@ fail2ban is an intrusion prevention software framework
 
 ## Requirements
 
+На Debian/Ubuntu роль ставит `fail2ban` и `ipset`: штатный для нас `banaction = iptables-ipset`
+без бинаря `ipset` молча не банит (`/bin/sh: ipset: not found`, `Set f2b-sshd doesn't exist`).
+
 * Ansible 3.0.0+;
 
 ## Example configuration
